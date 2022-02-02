@@ -52,10 +52,7 @@ namespace TrialOfShadows
             public bool Down { get; protected set; }
             public bool Held { get; protected set; }
             public bool Up { get; protected set; }
-            public bool Enabled
-            {
-                get { return mEnabled; }
-            }
+            public bool Enabled => mEnabled;
 
             [FormerlySerializedAs("m_Enabled")] [SerializeField]
             protected bool mEnabled = true;
@@ -193,10 +190,7 @@ namespace TrialOfShadows
             public XboxControllerAxes controllerAxis;
             public float Value { get; protected set; }
             public bool ReceivingInput { get; protected set; }
-            public bool Enabled
-            {
-                get { return m_Enabled; }
-            }
+            public bool Enabled => m_Enabled;
 
             protected bool m_Enabled = true;
             protected bool m_GettingInput = true;
