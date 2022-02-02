@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace TrialOfShadows
 {
@@ -53,12 +54,12 @@ namespace TrialOfShadows
             public bool Up { get; protected set; }
             public bool Enabled
             {
-                get { return m_Enabled; }
+                get { return mEnabled; }
             }
 
-            [SerializeField]
-            protected bool m_Enabled = true;
-            protected bool m_GettingInput = true;
+            [FormerlySerializedAs("m_Enabled")] [SerializeField]
+            protected bool mEnabled = true;
+            protected bool MGettingInput = true;
 
             //This is used to change the state of a button (Down, Up) only if at least a FixedUpdate happened between the previous Frame
             //and this one. Since movement are made in FixedUpdate, without that an input could be missed it get press/release between fixedupdate
@@ -88,7 +89,7 @@ namespace TrialOfShadows
 
             public void Get(bool fixedUpdateHappened, InputType inputType)
             {
-                if (!m_Enabled)
+                if (!mEnabled)
                 {
                     Down = false;
                     Held = false;
@@ -96,7 +97,7 @@ namespace TrialOfShadows
                     return;
                 }
 
-                if (!m_GettingInput)
+                if (!MGettingInput)
                     return;
 
                 if (inputType == InputType.Controller)
@@ -149,22 +150,22 @@ namespace TrialOfShadows
 
             public void Enable()
             {
-                m_Enabled = true;
+                mEnabled = true;
             }
 
             public void Disable()
             {
-                m_Enabled = false;
+                mEnabled = false;
             }
 
             public void GainControl()
             {
-                m_GettingInput = true;
+                MGettingInput = true;
             }
 
             public IEnumerator ReleaseControl(bool resetValues)
             {
-                m_GettingInput = false;
+                MGettingInput = false;
 
                 if (!resetValues)
                     yield break;
