@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="9281a68a-46d2-4529-8be7-f9814bb6bde3" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/.idea.TrialOfShadows.dir/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/.idea.TrialOfShadows.dir/.idea/indexLayout.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/.idea.TrialOfShadows.dir/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/InputSystem.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/InputSystem/PlayerInput.inputactions" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/InputSystem/PlayerInput.inputactions.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ProjectSettings/SceneTemplateSettings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/AlienFlora.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/AlienFlora.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/BGPlants.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/BGPlants.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/BGRock03.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/BGRock03.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/Clouds.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/Clouds.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/FloatingRocks.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/FloatingRocks.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/HangingPlants1.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/HangingPlants1.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/HangingPlants2.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/HangingPlants2.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/LowerPlants1.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/LowerPlants1.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/LowerPlants2.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/LowerPlants2.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/LowerPlants3.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/LowerPlants3.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/LowerPlants4.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/LowerPlants4.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/LowerPlants5.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/LowerPlants5.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/LowerPlants6.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/LowerPlants6.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/PlantMidSized.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/PlantMidSized.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/Plants.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/Plants.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/Platforms.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/Platforms.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/Rubble.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/Rubble.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/Spiderwebs.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/Spiderwebs.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/Stones.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/Stones.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/Tilesets/TilesetRock_WaterBlockers.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/Tilesets/TilesetRock_WaterBlockers.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/Tilesets/Tileset_Alien.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/Tilesets/Tileset_Alien.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/Tilesets/Tileset_Rock.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/Tilesets/Tileset_Rock.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/UndergroundRoots.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Art/Sprites/Environment/UndergroundRoots.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/Player.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/Player.prefab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Sprites/Environment/AlienFlora.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Sprites/Environment/AlienFlora.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Sprites/Environment/BGPlants.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Sprites/Environment/BGPlants.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Sprites/Environment/BGRock03.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Sprites/Environment/BGRock03.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Sprites/Environment/Clouds.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Sprites/Environment/Clouds.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Sprites/Environment/FloatingRocks.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Sprites/Environment/FloatingRocks.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Sprites/Environment/HangingPlants1.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Sprites/Environment/HangingPlants1.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Sprites/Environment/HangingPlants2.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Sprites/Environment/HangingPlants2.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Sprites/Environment/LowerPlants1.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Sprites/Environment/LowerPlants1.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Sprites/Environment/LowerPlants2.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Sprites/Environment/LowerPlants2.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Sprites/Environment/LowerPlants3.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Sprites/Environment/LowerPlants3.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Sprites/Environment/LowerPlants4.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Sprites/Environment/LowerPlants4.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Sprites/Environment/LowerPlants5.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Sprites/Environment/LowerPlants5.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Sprites/Environment/LowerPlants6.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Sprites/Environment/LowerPlants6.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Sprites/Environment/PlantMidSized.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Sprites/Environment/PlantMidSized.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Sprites/Environment/Plants.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Sprites/Environment/Plants.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Sprites/Environment/Platforms.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Sprites/Environment/Platforms.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Sprites/Environment/Rubble.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Sprites/Environment/Rubble.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Sprites/Environment/Spiderwebs.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Sprites/Environment/Spiderwebs.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Sprites/Environment/Stones.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Sprites/Environment/Stones.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Sprites/Environment/Tilesets/TilesetRock_WaterBlockers.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Sprites/Environment/Tilesets/TilesetRock_WaterBlockers.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Sprites/Environment/Tilesets/Tileset_Alien.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Sprites/Environment/Tilesets/Tileset_Alien.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Sprites/Environment/Tilesets/Tileset_Rock.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Sprites/Environment/Tilesets/Tileset_Rock.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Sprites/Environment/UndergroundRoots.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Sprites/Environment/UndergroundRoots.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Scripts.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Scripts/Player.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Scripts/Player/MonoBehavior.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Scripts/Player/MonoBehavior/InputComponent.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Scripts/Player/MonoBehavior/InputComponent.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Scripts/Player/MonoBehavior/PlayerInput.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Scripts/Player/MonoBehavior/PlayerInput.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Scripts/PlayerAnimator.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Scripts/PlayerAnimator.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Scripts/PlayerController.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Scripts/PlayerController.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Scripts/PlayerExtras.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Scripts/PlayerExtras.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Scripts/SceneManagment.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Scripts/SceneManagment/IDataPersister.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Scripts/SceneManagment/IDataPersister.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Scripts/SceneManagment/PersistDataManager.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Scripts/SceneManagment/PersistDataManager.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/manifest.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/manifest.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/packages-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/packages-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectSettings/ProjectSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/ProjectSettings.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectSettings/ProjectVersion.txt" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/ProjectVersion.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectSettings/TagManager.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/TagManager.asset" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Character/MonoBehavior/PlayerInput.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/PlayerController.cs" root0="SKIP_HIGHLIGHTING" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="24cOQ6LOOO2exZvwth6u2FCc3eW" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
+    <property name="vue.rearranger.settings.migration" value="true" />
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="9281a68a-46d2-4529-8be7-f9814bb6bde3" name="Changes" comment="" />
+      <created>1643926394614</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1643926394614</updated>
+      <workItem from="1643926404562" duration="1766000" />
+      <workItem from="1644446619862" duration="103000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
+  <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
+  <component name="UnityUnitTestConfiguration" currentTestLauncher="NUnit" />
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+</project>
