@@ -1,7 +1,6 @@
 using System;
-using UnityEngine;
 
-namespace TrialOfShadows
+namespace _Scripts.SceneManagment
 {
     /// <summary>
     /// Classes that implement this interface should have an serialized instance of DataSettings to register through.

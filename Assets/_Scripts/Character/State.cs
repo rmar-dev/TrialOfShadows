@@ -1,6 +1,6 @@
 using System.Collections;
 
-namespace _Scripts.Player
+namespace _Scripts.Character
 {
     public abstract class State
     {

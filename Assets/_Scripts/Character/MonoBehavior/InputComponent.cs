@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace _Scripts.Player.MonoBehavior
+namespace _Scripts.Character.MonoBehavior
 {
     public abstract class InputComponent : MonoBehaviour
     {

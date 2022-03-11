@@ -1,8 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace TrialOfShadows
+namespace _Scripts.SceneManagment
 {
     public class PersistentDataManager : MonoBehaviour
     {
