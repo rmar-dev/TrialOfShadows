@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace TrialOfShadows
+namespace _Scripts.Player.MonoBehavior
 {
     public abstract class InputComponent : MonoBehaviour
     {

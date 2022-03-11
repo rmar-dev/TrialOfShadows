@@ -1,7 +1,7 @@
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace TrialOfShadows
+namespace _Scripts.Player.MonoBehavior
 {
     /// <summary>
     /// This is a pretty filthy script. I was just arbitrarily adding to it as I went.

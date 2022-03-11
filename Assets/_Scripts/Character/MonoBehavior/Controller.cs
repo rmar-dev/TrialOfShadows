@@ -2,24 +2,17 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace TrialOfShadows
+namespace _Scripts.Player.MonoBehavior
 {
-    /// <summary>
-    /// Hey!
-    /// Tarodev here. I built this controller as there was a severe lack of quality & free 2D controllers out there.
-    /// Right now it only contains movement and jumping, but it should be pretty easy to expand... I may even do it myself
-    /// if there's enough interest. You can play and compete for best times here: https://tarodev.itch.io/
-    /// If you hve any questions or would like to brag about your score, come to discord: https://discord.gg/GqeHHnhHpz
-    /// </summary>
-    public class PlayerController : MonoBehaviour, IPlayerController {
-        // Public for external hooks
+    public class Controller : StateMachine, IPlayerController  {
+        
         public Vector3 Velocity { get; private set; }
         public FrameInput Input { get; private set; }
         public bool JumpingThisFrame { get; private set; }
         public bool LandingThisFrame { get; private set; }
         public Vector3 RawMovement { get; private set; }
-        public bool Grounded => _colDown;
-
+        public bool Grounded => collidingDown;
+        
         private Vector3 _lastPosition;
         private float _currentHorizontalSpeed, _currentVerticalSpeed;
 
@@ -70,7 +63,7 @@ namespace TrialOfShadows
         [SerializeField] [Range(0.1f, 0.3f)] private float _rayBuffer = 0.1f; // Prevents side detectors hitting the ground
 
         private RayRange _raysUp, _raysRight, _raysDown, _raysLeft;
-        private bool _colUp, _colRight, _colDown, _colLeft;
+        private bool collisionUp, collidingRight, collidingDown, collidingLeft;
 
         private float _timeLeftGrounded;
 
@@ -82,18 +75,18 @@ namespace TrialOfShadows
             // Ground
             LandingThisFrame = false;
             var groundedCheck = RunDetection(_raysDown);
-            if (_colDown && !groundedCheck) _timeLeftGrounded = Time.time; // Only trigger when first leaving
-            else if (!_colDown && groundedCheck) {
+            if (collidingDown && !groundedCheck) _timeLeftGrounded = Time.time; // Only trigger when first leaving
+            else if (!collidingDown && groundedCheck) {
                 _coyoteUsable = true; // Only trigger when first touching
                 LandingThisFrame = true;
             }
 
-            _colDown = groundedCheck;
+            collidingDown = groundedCheck;
 
             // The rest
-            _colUp = RunDetection(_raysUp);
-            _colLeft = RunDetection(_raysLeft);
-            _colRight = RunDetection(_raysRight);
+            collisionUp = RunDetection(_raysUp);
+            collidingLeft = RunDetection(_raysLeft);
+            collidingRight = RunDetection(_raysRight);
 
             bool RunDetection(RayRange range) {
                 return EvaluateRayPositions(range).Any(point => Physics2D.Raycast(point, range.Dir, _detectionRayLength, _groundLayer));
@@ -169,7 +162,7 @@ namespace TrialOfShadows
                 _currentHorizontalSpeed = Mathf.MoveTowards(_currentHorizontalSpeed, 0, _deAcceleration * Time.deltaTime);
             }
 
-            if (_currentHorizontalSpeed > 0 && _colRight || _currentHorizontalSpeed < 0 && _colLeft) {
+            if (_currentHorizontalSpeed > 0 && collidingRight || _currentHorizontalSpeed < 0 && collidingLeft) {
                 // Don't walk through walls
                 _currentHorizontalSpeed = 0;
             }
@@ -185,7 +178,7 @@ namespace TrialOfShadows
         private float _fallSpeed;
 
         private void CalculateGravity() {
-            if (_colDown) {
+            if (collidingDown) {
                 // Move out of the ground
                 if (_currentVerticalSpeed < 0) _currentVerticalSpeed = 0;
             }
@@ -204,7 +197,7 @@ namespace TrialOfShadows
         #endregion
 
         #region Jump
-
+        
         [Header("JUMPING")] [SerializeField] private float _jumpHeight = 30;
         [SerializeField] private float _jumpApexThreshold = 10f;
         [SerializeField] private float _coyoteTimeThreshold = 0.1f;
@@ -214,11 +207,17 @@ namespace TrialOfShadows
         private bool _endedJumpEarly = true;
         private float _apexPoint; // Becomes 1 at the apex of a jump
         private float _lastJumpPressed;
-        private bool CanUseCoyote => _coyoteUsable && !_colDown && _timeLeftGrounded + _coyoteTimeThreshold > Time.time;
-        private bool HasBufferedJump => _colDown && _lastJumpPressed + _jumpBuffer > Time.time;
+        private bool CanUseCoyote => _coyoteUsable && !collidingDown && _timeLeftGrounded + _coyoteTimeThreshold > Time.time;
+        private bool HasBufferedJump => collidingDown && _lastJumpPressed + _jumpBuffer > Time.time;
 
+        public void JumpInputPressed () => UpdateJumpInputAction();
+
+        private void UpdateJumpInputAction()
+        {
+            StartCoroutine(State.Jump());
+        }
         private void CalculateJumpApex() {
-            if (!_colDown) {
+            if (!collidingDown) {
                 // Gets stronger the closer to the top of the jump
                 _apexPoint = Mathf.InverseLerp(_jumpApexThreshold, 0, Mathf.Abs(Velocity.y));
                 _fallSpeed = Mathf.Lerp(_minFallSpeed, _maxFallSpeed, _apexPoint);
@@ -230,7 +229,7 @@ namespace TrialOfShadows
 
         private void CalculateJump() {
             // Jump if: grounded or within coyote threshold || sufficient jump buffer
-            if (Input.JumpDown && CanUseCoyote || HasBufferedJump) {
+            if (collidingDown && CanUseCoyote || HasBufferedJump) {
                 _currentVerticalSpeed = _jumpHeight;
                 _endedJumpEarly = false;
                 _coyoteUsable = false;
@@ -242,12 +241,12 @@ namespace TrialOfShadows
             }
 
             // End the jump early if button released
-            if (!_colDown && Input.JumpUp && !_endedJumpEarly && Velocity.y > 0) {
+            if (!collidingDown && Input.JumpUp && !_endedJumpEarly && Velocity.y > 0) {
                 // _currentVerticalSpeed = 0;
                 _endedJumpEarly = true;
             }
 
-            if (_colUp) {
+            if (collisionUp) {
                 if (_currentVerticalSpeed > 0) _currentVerticalSpeed = 0;
             }
         }

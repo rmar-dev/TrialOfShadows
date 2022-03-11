@@ -1,6 +1,7 @@
+using _Scripts.SceneManagment;
 using UnityEngine;
 
-namespace TrialOfShadows
+namespace _Scripts.Player.MonoBehavior
 {
     public class PlayerInputs : InputComponent, IDataPersister
     {
