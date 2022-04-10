@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using _Scripts.Character.Interface;
 using _Scripts.Character.Model;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace _Scripts.Character.MonoBehavior.Player
 {
@@ -17,12 +15,12 @@ namespace _Scripts.Character.MonoBehavior.Player
 
         [SerializeField] [Range(0.1f, 0.3f)]
         private float rayBuffer = 0.1f; // Prevents side detectors hitting the ground
-        
+        [SerializeField] [Range(0.0f, 3.0f)] private float currentGizmoSize = 0.05f;
+
         #region Collisions
-        private Vector3 CurrentPosition { get; set; }
         private RayRange rayRangeUp, rayRangeRight, rayRangeDown, rayRangeLeft;
         private bool collidingUp, collidingRight, collidingDown, collidingLeft;
-
+        private Vector3 halfSize;
         public bool CollidingUp => collidingUp;
         public bool Grounded => collidingDown;
         public bool TouchGroundThisFrame => collidingDown && !previusGroundCheck;
@@ -31,7 +29,7 @@ namespace _Scripts.Character.MonoBehavior.Player
         public bool CollidingLeft => collidingLeft;
         public bool CollidingRight => collidingRight;
 
-        public Vector3 GetTransformPosition => CurrentPosition + characterBounds.center;
+        public Vector3 GetTransformPosition => transform.position + characterBounds.center;
 
         private bool previusGroundCheck;
         private void Awake()
@@ -41,9 +39,13 @@ namespace _Scripts.Character.MonoBehavior.Player
 
         private void FixedUpdate()
         {
-            CurrentPosition = transform.position;
             CalculateRayRanged();
+            if (previusGroundCheck != collidingDown)
+            {
+                Debug.Log("this is grounded state " + collidingDown);
+            }
             previusGroundCheck = collidingDown;
+            
             RunCollisionChecks();
         }
         
@@ -73,10 +75,7 @@ namespace _Scripts.Character.MonoBehavior.Player
             rayRangeRight = new RayRange(b.max.x, b.min.y + rayBuffer, b.max.x, b.max.y - rayBuffer, Vector2.right);
         }
 
-        public Collider2D OverlapBoxDetector(Vector2 furthestPoint)
-        {
-            return Physics2D.OverlapBox(furthestPoint, characterBounds.size, 0, groundLayer);
-        }
+        public Collider2D OverlapBoxDetector(Vector2 furthestPoint) => Physics2D.OverlapBox(furthestPoint, characterBounds.size, 0, groundLayer);
 
 
         public IEnumerable<Vector2> EvaluateRayPositions(RayRange range)
@@ -104,11 +103,7 @@ namespace _Scripts.Character.MonoBehavior.Player
         private float currentHorizontalSpeed, currentVerticalSpeed;
         public float CurrentHorizontalSpeed => currentHorizontalSpeed;
         public float CurrentVerticalSpeed => currentVerticalSpeed;
-
-        public void UpdateCurrentVerticalSpeedIfNeeded()
-        {
-            if (currentVerticalSpeed < 0) currentVerticalSpeed = 0;
-        }
+        
         public void StopMovingVerticaly()
         {
             currentVerticalSpeed = 0;
@@ -138,8 +133,8 @@ namespace _Scripts.Character.MonoBehavior.Player
 
         public Vector3 GetClosestPosition(Collider2D collider)
         {
-            var positionToCheck = new Vector3(CurrentPosition.x + characterBounds.size.x , CurrentPosition.y + characterBounds.size.y , CurrentPosition.z);
-            Debug.Log("positionToCheck : " + positionToCheck);
+            var transformPosition = transform.position;
+            var positionToCheck = new Vector3(transformPosition.x + characterBounds.size.x , transformPosition.y + characterBounds.size.y , transformPosition.z);
             return collider.ClosestPoint(positionToCheck);
         }
         
@@ -166,7 +161,6 @@ namespace _Scripts.Character.MonoBehavior.Player
 
         public bool CanAccelerate()
         {
-            Debug.Log("Collider lerf " + collidingLeft);
             if ((!(currentHorizontalSpeed > 0) || !CollidingRight) &&
                 (!(currentHorizontalSpeed < 0) || !CollidingLeft)) return true;
 
@@ -174,17 +168,30 @@ namespace _Scripts.Character.MonoBehavior.Player
             return false;
         }
 
-        public bool MoveIfNeeded() => currentVerticalSpeed != 0 || currentHorizontalSpeed != 0;
+        public bool MoveIfNeeded() => !Grounded || currentVerticalSpeed != 0 || currentHorizontalSpeed != 0;
         public Vector2 GetRawMovement() => new Vector2(currentHorizontalSpeed, currentVerticalSpeed);
+        
+        public Vector2 GetClosestPointToMoveTo(Collider2D hit)
+        {
+            halfSize = characterBounds.size / 2;
+            var transformPosition = transform.position;
+            Vector2 feetPosition = new Vector2(transformPosition.x, transformPosition.y - halfSize.y);
+            return hit.ClosestPoint(feetPosition);
+        }
+
         private void OnDrawGizmos()
         {
-            if (Application.isPlaying) return;
+            var transformPosition = transform.position;
 
             // Bounds
             Gizmos.color = Color.yellow;
-            Vector3 transformPosition = transform.position;
             Gizmos.DrawWireCube(transformPosition + characterBounds.center, characterBounds.size);
-
+            
+            Vector3 gizmoHalfSize = characterBounds.size / 2;
+            Gizmos.color = Color.white;
+            Vector3 feetPosition = new Vector3(transformPosition.x, transformPosition.y - gizmoHalfSize.y, transformPosition.z);
+            Gizmos.DrawSphere(feetPosition, currentGizmoSize + 0.02f);
+            
             // Rays
             CalculateRayRanged();
             Gizmos.color = Color.blue;
