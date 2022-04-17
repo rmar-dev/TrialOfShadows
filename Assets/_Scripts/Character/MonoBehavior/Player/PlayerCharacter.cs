@@ -195,7 +195,7 @@ namespace _Scripts.Character.MonoBehavior.Player
         {
             if (Grounded && CurrentVerticalSpeed != 0)
             {
-                mPhysicsController.StopMovingVerticaly();
+                mPhysicsController.StopMovingVertically();
                 return;
             }
 
@@ -254,29 +254,35 @@ namespace _Scripts.Character.MonoBehavior.Player
             var furthestPoint = position + move;
 
             var hit = mPhysicsController.OverlapBoxDetector(furthestPoint);
-            
+
             if (!hit)
             {
                 transform.position += move;
                 return;
             }
-            
+
             var closestPoint = mPhysicsController.GetClosestPointToMoveTo(hit);
-            gizmoClosestTransformPosition = closestPoint;
-            
-            Vector3 positionToMoveTo = transform.position;
-            
+
+            contactPoint = closestPoint;
+            var finalPoint = Vector2.Lerp(transform.position, closestPoint, (float) 0.6);
+
+            gizmoClosestTransformPosition = finalPoint;
+            transform.position = finalPoint;
+
+            // transform.position = new Vector3(transform.position.x, finalPoint.y, transform.position.z);
+
+
             // otherwise increment away from current pos; see what closest position we can move to
-            for (int collider = 1; collider < freeColliderIterations; collider++) {
-                
+            /*for (int collider = 1; collider < freeColliderIterations; collider++) {
                 // increment to check all but furthestPoint - we did that already
                 var t = (float)collider / freeColliderIterations;
                 var posToTry = Vector2.Lerp(positionToMoveTo, new Vector2(positionToMoveTo.x, closestPoint.y), t);
                 contactPoint = positionToMoveTo;
-                Debug.Log(mPhysicsController.OverlapBoxDetector(posToTry));
-                Debug.Log(message: "x: "+ positionToMoveTo.x + "y: "+ positionToMoveTo.y);
-                Debug.Log(message: $"x: {posToTry.x} y: {posToTry.y}");
-
+                Debug.Log($"// collider: {collider} freeColliderIterations {freeColliderIterations}, t {t}");
+                Debug.Log(message: "closestPoint x: "+ closestPoint.x + "y: "+ closestPoint.y);
+                Debug.Log(message: $" posToTry x: {posToTry.x} y: {posToTry.y}");
+                Debug.Log(message: $" positionToMoveTo x: {positionToMoveTo.x} y: {positionToMoveTo.y}");
+                Debug.Log($"// mPhysicsController: {mPhysicsController.OverlapBoxDetector(posToTry)}");
 
                 if (mPhysicsController.OverlapBoxDetector(posToTry)) {
                     
@@ -285,7 +291,7 @@ namespace _Scripts.Character.MonoBehavior.Player
                 }
 
                 positionToMoveTo = posToTry;
-            }
+            }*/
         }
 
         public Vector2 contactPoint { get; set; }

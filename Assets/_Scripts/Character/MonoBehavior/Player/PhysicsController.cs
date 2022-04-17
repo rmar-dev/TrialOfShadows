@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using _Scripts.Character.Model;
@@ -18,20 +17,20 @@ namespace _Scripts.Character.MonoBehavior.Player
         [SerializeField] [Range(0.0f, 3.0f)] private float currentGizmoSize = 0.05f;
 
         #region Collisions
-        private RayRange rayRangeUp, rayRangeRight, rayRangeDown, rayRangeLeft;
-        private bool collidingUp, collidingRight, collidingDown, collidingLeft;
-        private Vector3 halfSize;
-        public bool CollidingUp => collidingUp;
-        public bool Grounded => collidingDown;
-        public bool TouchGroundThisFrame => collidingDown && !previusGroundCheck;
-        public bool ExitGroundThisFrame => !collidingDown && previusGroundCheck;
+        private RayRange _rayRangeUp, _rayRangeRight, _rayRangeDown, _rayRangeLeft;
+        private bool _collidingUp, _collidingRight, _collidingDown, _collidingLeft;
+        private Vector3 _halfSize;
+        public bool CollidingUp => _collidingUp;
+        public bool Grounded => _collidingDown;
+        public bool TouchGroundThisFrame => _collidingDown && !_previousGroundCheck;
+        public bool ExitGroundThisFrame => !_collidingDown && _previousGroundCheck;
 
-        public bool CollidingLeft => collidingLeft;
-        public bool CollidingRight => collidingRight;
+        public bool CollidingLeft => _collidingLeft;
+        public bool CollidingRight => _collidingRight;
 
         public Vector3 GetTransformPosition => transform.position + characterBounds.center;
 
-        private bool previusGroundCheck;
+        private bool _previousGroundCheck;
         private void Awake()
         {
             Physics2D.colliderAwakeColor = Color.yellow;
@@ -40,11 +39,11 @@ namespace _Scripts.Character.MonoBehavior.Player
         private void FixedUpdate()
         {
             CalculateRayRanged();
-            if (previusGroundCheck != collidingDown)
+            if (_previousGroundCheck != _collidingDown)
             {
-                Debug.Log("this is grounded state " + collidingDown);
+                Debug.Log("this is grounded state " + _collidingDown);
             }
-            previusGroundCheck = collidingDown;
+            _previousGroundCheck = _collidingDown;
             
             RunCollisionChecks();
         }
@@ -52,10 +51,10 @@ namespace _Scripts.Character.MonoBehavior.Player
         private void RunCollisionChecks()
         {
 
-            collidingDown = RunDetection(rayRangeDown);
-            collidingUp = RunDetection(rayRangeUp);
-            collidingLeft = RunDetection(rayRangeLeft);
-            collidingRight = RunDetection(rayRangeRight);
+            _collidingDown = RunDetection(_rayRangeDown);
+            _collidingUp = RunDetection(_rayRangeUp);
+            _collidingLeft = RunDetection(_rayRangeLeft);
+            _collidingRight = RunDetection(_rayRangeRight);
 
             bool RunDetection(RayRange range)
             {
@@ -69,16 +68,16 @@ namespace _Scripts.Character.MonoBehavior.Player
             // This is crying out for some kind of refactor. 
             var b = new Bounds(transform.position + characterBounds.center, characterBounds.size);
 
-            rayRangeDown = new RayRange(b.min.x + rayBuffer, b.min.y, b.max.x - rayBuffer, b.min.y, Vector2.down);
-            rayRangeUp = new RayRange(b.min.x + rayBuffer, b.max.y, b.max.x - rayBuffer, b.max.y, Vector2.up);
-            rayRangeLeft = new RayRange(b.min.x, b.min.y + rayBuffer, b.min.x, b.max.y - rayBuffer, Vector2.left);
-            rayRangeRight = new RayRange(b.max.x, b.min.y + rayBuffer, b.max.x, b.max.y - rayBuffer, Vector2.right);
+            _rayRangeDown = new RayRange(b.min.x + rayBuffer, b.min.y, b.max.x - rayBuffer, b.min.y, Vector2.down);
+            _rayRangeUp = new RayRange(b.min.x + rayBuffer, b.max.y, b.max.x - rayBuffer, b.max.y, Vector2.up);
+            _rayRangeLeft = new RayRange(b.min.x, b.min.y + rayBuffer, b.min.x, b.max.y - rayBuffer, Vector2.left);
+            _rayRangeRight = new RayRange(b.max.x, b.min.y + rayBuffer, b.max.x, b.max.y - rayBuffer, Vector2.right);
         }
 
         public Collider2D OverlapBoxDetector(Vector2 furthestPoint) => Physics2D.OverlapBox(furthestPoint, characterBounds.size, 0, groundLayer);
 
 
-        public IEnumerable<Vector2> EvaluateRayPositions(RayRange range)
+        private IEnumerable<Vector2> EvaluateRayPositions(RayRange range)
         {
             for (var detector = 0; detector < detectorCount; detector++)
             {
@@ -100,83 +99,90 @@ namespace _Scripts.Character.MonoBehavior.Player
         [SerializeField] private float moveClamp = 13;
         [SerializeField] private float deAcceleration = 60f;
 
-        private float currentHorizontalSpeed, currentVerticalSpeed;
-        public float CurrentHorizontalSpeed => currentHorizontalSpeed;
-        public float CurrentVerticalSpeed => currentVerticalSpeed;
+        private float _currentHorizontalSpeed, _currentVerticalSpeed;
+        public float CurrentHorizontalSpeed => _currentHorizontalSpeed;
+        public float CurrentVerticalSpeed => _currentVerticalSpeed;
         
-        public void StopMovingVerticaly()
+        public void StopMovingVertically()
         {
-            currentVerticalSpeed = 0;
+            _currentVerticalSpeed = 0;
         }
 
         public void AddVerticalSpeedHeight()
         {
-            currentVerticalSpeed = jumpHeight;
+            _currentVerticalSpeed = jumpHeight;
         }
         public bool IsCollidingTop()
         {
-            if (!collidingUp) return false;
+            if (!_collidingUp) return false;
                 
-            currentVerticalSpeed = 0;
+            _currentVerticalSpeed = 0;
             return true;
         }
         private float CalculateFallSpeedHelper(float apexPoint) =>
-            !collidingDown ? Mathf.Lerp(minFallSpeed, maxFallSpeed, apexPoint) : 0;
+            !_collidingDown ? Mathf.Lerp(minFallSpeed, maxFallSpeed, apexPoint) : 0;
 
         public float CalculateFallSpeed(float apexPoint)
         {
-            if (!collidingDown) return CalculateFallSpeedHelper(apexPoint);
+            if (!_collidingDown) return CalculateFallSpeedHelper(apexPoint);
 
-            currentVerticalSpeed = 0;
+            _currentVerticalSpeed = 0;
             return 0;
         }
 
-        public Vector3 GetClosestPosition(Collider2D collider)
-        {
-            var transformPosition = transform.position;
-            var positionToCheck = new Vector3(transformPosition.x + characterBounds.size.x , transformPosition.y + characterBounds.size.y , transformPosition.z);
-            return collider.ClosestPoint(positionToCheck);
-        }
-        
         public void UpdateCurrentVerticalSpeed(float fallSpeedModifier)
         {
-            currentVerticalSpeed -= fallSpeedModifier * Time.deltaTime;
+            _currentVerticalSpeed -= fallSpeedModifier * Time.deltaTime;
 
-            if (currentVerticalSpeed < fallClamp) currentVerticalSpeed = fallClamp;
+            if (_currentVerticalSpeed < fallClamp) _currentVerticalSpeed = fallClamp;
         }
 
         public void CalculateAcceleration(float horizontalMove, float tempApexBonus)
         {
-            currentHorizontalSpeed += horizontalMove * acceleration * Time.deltaTime;
+            _currentHorizontalSpeed += horizontalMove * acceleration * Time.deltaTime;
 
-            currentHorizontalSpeed = Mathf.Clamp(currentHorizontalSpeed, -moveClamp, moveClamp);
+            _currentHorizontalSpeed = Mathf.Clamp(_currentHorizontalSpeed, -moveClamp, moveClamp);
 
-            currentHorizontalSpeed += tempApexBonus * Time.deltaTime;
+            _currentHorizontalSpeed += tempApexBonus * Time.deltaTime;
         }
 
         public void CalculateDeceleration()
         {
-            currentHorizontalSpeed = Mathf.MoveTowards(currentHorizontalSpeed, 0, deAcceleration * Time.deltaTime);
+            _currentHorizontalSpeed = Mathf.MoveTowards(_currentHorizontalSpeed, 0, deAcceleration * Time.deltaTime);
         }
 
         public bool CanAccelerate()
         {
-            if ((!(currentHorizontalSpeed > 0) || !CollidingRight) &&
-                (!(currentHorizontalSpeed < 0) || !CollidingLeft)) return true;
+            if ((!(_currentHorizontalSpeed > 0) || !CollidingRight) &&
+                (!(_currentHorizontalSpeed < 0) || !CollidingLeft)) return true;
 
-            currentHorizontalSpeed = 0;
+            _currentHorizontalSpeed = 0;
             return false;
         }
 
-        public bool MoveIfNeeded() => !Grounded || currentVerticalSpeed != 0 || currentHorizontalSpeed != 0;
-        public Vector2 GetRawMovement() => new Vector2(currentHorizontalSpeed, currentVerticalSpeed);
+        public bool MoveIfNeeded() => !Grounded || _currentVerticalSpeed != 0 || _currentHorizontalSpeed != 0;
+        public Vector2 GetRawMovement() => new Vector2(_currentHorizontalSpeed, _currentVerticalSpeed);
         
         public Vector2 GetClosestPointToMoveTo(Collider2D hit)
         {
-            halfSize = characterBounds.size / 2;
-            var transformPosition = transform.position;
-            Vector2 feetPosition = new Vector2(transformPosition.x, transformPosition.y - halfSize.y);
-            return hit.ClosestPoint(feetPosition);
+            Vector2 closestPoint = hit.ClosestPoint(transform.position);
+            Vector2 halfSize = characterBounds.size / 2;
+            Vector2 direction = CalculateDirection(closestPoint);
+            Vector2 finalDirection = direction * halfSize;
+            return closestPoint - finalDirection;
+        }
+
+        private Vector2 CalculateDirection(Vector2 closestPoint)
+        {
+            Vector3 transformPosition = transform.position;
+            Debug.Log($"finalDirection {closestPoint.y - transformPosition.y}, vector.down { Vector2.down }");
+
+            if (closestPoint.y - transformPosition.y < 0)
+            {
+                return Vector2.down;
+            }
+            
+            return Vector2.up;
         }
 
         private void OnDrawGizmos()
@@ -195,7 +201,7 @@ namespace _Scripts.Character.MonoBehavior.Player
             // Rays
             CalculateRayRanged();
             Gizmos.color = Color.blue;
-            foreach (var range in new List<RayRange> { rayRangeUp, rayRangeRight, rayRangeDown, rayRangeLeft }) {
+            foreach (var range in new List<RayRange> { _rayRangeUp, _rayRangeRight, _rayRangeDown, _rayRangeLeft }) {
                 foreach (var point in EvaluateRayPositions(range)) {
                     Gizmos.DrawRay(point, range.Dir * detectionRayLength);
                 }
@@ -203,7 +209,7 @@ namespace _Scripts.Character.MonoBehavior.Player
                 
             // Draw the future position. Handy for visualizing gravity
             Gizmos.color = Color.red;
-            var move = new Vector2(currentHorizontalSpeed, currentVerticalSpeed) * Time.deltaTime;
+            var move = new Vector2(_currentHorizontalSpeed, _currentVerticalSpeed) * Time.deltaTime;
             Gizmos.DrawWireCube((transformPosition + new Vector3(move.x, move.y, 0)), characterBounds.size);
         }
         
