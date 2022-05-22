@@ -1,22 +1,41 @@
+using System.Runtime.Serialization;
 using _Scripts.Character.Interface;
+using _Scripts.Character.StateMachineBehaviors.Player;
 using UnityEditor;
 using UnityEngine;
 
 namespace _Scripts.Character.MonoBehavior.Player
 {
-    public class PlayerCharacter : MonoBehaviour, IPlayerController
+    public class PlayerCharacter : MonoBehaviour, IPlayerHandler, IPhysicsHandler, IPlayerAnimator
     {
-        private static PlayerCharacter sPlayerInstance;
-        public static PlayerCharacter PlayerInstance => sPlayerInstance;
-
-        public SpriteRenderer spriteRenderer;
-
-        private Vector3 lastPosition;
-        private bool startingFacingLeft = false;
-        private PhysicsController mPhysicsController;
-        private PlayerInputController playerInputController;
-        [SerializeField] public bool spriteOriginallyFacesLeft;
+        [SerializeField] private bool spriteOriginallyFacesLeft;
         [SerializeField] [Range(0.0f, 3.0f)] private float closestGizmoSize = 0.1f;
+        [SerializeField] private Animator animator;
+        [SerializeField] private AudioSource source ;
+        [SerializeField] private LayerMask groundMask ;
+        [SerializeField] private ParticleSystem jumpParticles, launchParticles, moveParticles, landParticles; 
+        [SerializeField] private AudioClip[] footsteps;
+        [SerializeField] private float maxTilt = .1f;
+        [SerializeField] private float tiltSpeed = 1f ; 
+        [SerializeField] private float maxParticleFallSpeed = -40f;
+        
+        private PlayerAnimator<PlayerCharacter> _playerAnimator;
+        private MecanimStateController _mecanimStateController;
+        private Vector3 _lastPosition;
+        private PhysicsController _mPhysicsController;
+        private PlayerInputController _playerInputController;
+        public SpriteRenderer spriteRenderer;
+        public Animator Animator => animator;
+        public AudioSource AudioSource => source;
+        public LayerMask GroundMask => groundMask;
+        public ParticleSystem JumpParticles => jumpParticles;
+        public ParticleSystem LaunchParticles => launchParticles;
+        public ParticleSystem MoveParticles => moveParticles;
+        public ParticleSystem LandParticles => landParticles;
+        public AudioClip[] Footsteps => footsteps;
+        public float MaxTilt => maxTilt;
+        public float TiltSpeed => tiltSpeed;
+        public float MaxParticleFallSpeed => maxParticleFallSpeed;
 
         #region IPLayerController
 
@@ -24,13 +43,16 @@ namespace _Scripts.Character.MonoBehavior.Player
         public bool JumpingThisFrame { get; private set; }
         public bool LandingThisFrame { get; private set; }
         public Vector3 RawMovement { get; private set; }
-        public bool Grounded => mPhysicsController.Grounded;
-        private bool CollidingTop => mPhysicsController.CollidingUp;
-        private bool CollidingLeft => mPhysicsController.CollidingLeft;
-        private bool CollidingRight => mPhysicsController.CollidingRight;
+        public Transform Transform { get; private set; }
 
-        private float CurrentVerticalSpeed => mPhysicsController.CurrentVerticalSpeed;
-        private float CurrentHorizontalSpeed => mPhysicsController.CurrentHorizontalSpeed;
+        public bool Grounded => _mPhysicsController.Grounded;
+        public bool CollidingTop => _mPhysicsController.CollidingUp;
+        public bool CollidingLeft => _mPhysicsController.CollidingLeft;
+        public bool CollidingRight => _mPhysicsController.CollidingRight;
+
+        public Bounds CharacterBounds => _mPhysicsController.CharacterBounds;
+        public float CurrentVerticalSpeed => _mPhysicsController.CurrentVerticalSpeed;
+        public float CurrentHorizontalSpeed => _mPhysicsController.CurrentHorizontalSpeed;
 
         #endregion
 
@@ -41,26 +63,29 @@ namespace _Scripts.Character.MonoBehavior.Player
         private void Awake()
         {
             Invoke(nameof(Activate), 0.5f);
-            sPlayerInstance = GetComponent<PlayerCharacter>();
-            mPhysicsController = GetComponent<PhysicsController>();
-            playerInputController = new PlayerInputController().Initialise();
+            _mPhysicsController = GetComponent<PhysicsController>();
+            _playerInputController = new PlayerInputController().Initialise();
+            _mecanimStateController = new MecanimStateController(Animator);
+            _playerAnimator = new PlayerAnimator<PlayerCharacter>(this);
         }
 
         private void Start()
         {
-            playerInputController.EnablePlayerNormalInput = true;
-            startingFacingLeft = GetFacing() < 0.0f;
+            _playerInputController.EnablePlayerNormalInput = true;
+            SceneLinkedSMB<PlayerCharacter>.Initialise(Animator, this);
         }
 
         private void FixedUpdate()
         {
             CalculateGravity();
-
         }
 
         private void Update()
         {
             if (!active) return;
+            UpdateVelocity(transform.position);
+            _playerAnimator.Update();
+            _mecanimStateController.UpdateWithNewState(this);
 
             CalculateWalk();
             CalculateJumpApex();
@@ -68,20 +93,24 @@ namespace _Scripts.Character.MonoBehavior.Player
 
             MoveCharacter();
             UpdateFacing();
+
+            RunCollisionsCheck();
+            
         }
 
         private void UpdateVelocity(Vector3 position)
         {
-            Velocity = (position - lastPosition) / Time.deltaTime;
-            lastPosition = position;
+            Velocity = (position - _lastPosition) / Time.deltaTime;
+            _lastPosition = position;
+            Transform = transform;
         }
 
         #region SpriteFacing
 
         public void UpdateFacing()
         {
-            bool faceLeft = playerInputController.MovementAxisRaw.x < 0f;
-            bool faceRight = playerInputController.MovementAxisRaw.x > 0f;
+            bool faceLeft = _playerInputController.MovementAxisRaw.x < 0f;
+            bool faceRight = _playerInputController.MovementAxisRaw.x > 0f;
 
             if (faceLeft)
             {
@@ -93,23 +122,6 @@ namespace _Scripts.Character.MonoBehavior.Player
             }
         }
 
-        public void UpdateFacing(bool faceLeft)
-        {
-            if (faceLeft)
-            {
-                spriteRenderer.flipX = !spriteOriginallyFacesLeft;
-            }
-            else
-            {
-                spriteRenderer.flipX = spriteOriginallyFacesLeft;
-            }
-        }
-
-        public float GetFacing()
-        {
-            return spriteRenderer.flipX != spriteOriginallyFacesLeft ? -1f : 1f;
-        }
-
         #endregion
 
         #region Jump
@@ -118,34 +130,32 @@ namespace _Scripts.Character.MonoBehavior.Player
         [SerializeField] private float coyoteTimeThreshold = 0.1f;
         [SerializeField] private float jumpBuffer = 0.1f;
 
-        private bool Jumping => playerInputController.Jump;
-        private float LastJumpPressed => playerInputController.LastJumpPressedTime;
+        private bool Jumping => _playerInputController.Jump;
+        private float LastJumpPressed => _playerInputController.LastJumpPressedTime;
 
-        private bool coyoteUsable;
-        private bool endedJumpEarly = true;
-        private float apexPoint; // Becomes 1 at the apex of a jump
+        private bool _coyoteUsable;
+        private bool _endedJumpEarly = true;
+        private float _apexPoint; // Becomes 1 at the apex of a jump
 
-        private bool CanUseCoyote => coyoteUsable && !Grounded && timeLeftGrounded + coyoteTimeThreshold > Time.time;
+        private bool CanUseCoyote => _coyoteUsable && !Grounded && _timeLeftGrounded + coyoteTimeThreshold > Time.time;
         private bool HasBufferedJump => Grounded && LastJumpPressed + jumpBuffer > Time.time;
 
-        private void CalculateJumpApex() => apexPoint = CalculateJumpApexPoint();
+        private void CalculateJumpApex() => _apexPoint = CalculateJumpApexPoint();
 
         private float CalculateJumpApexPoint()
         {
             if (Grounded) return 0;
 
             return Mathf.InverseLerp(jumpApexThreshold, 0, Mathf.Abs(Velocity.y));
-            ;
         }
 
         private void CalculateJump()
         {
-            if (!mPhysicsController.IsCollidingTop())
+            if (!CollidingTop)
             {
                 ApplyJumpIfNeeded();
             }
-
-            ;
+            
             EndedJumpEarly();
         }
 
@@ -153,10 +163,10 @@ namespace _Scripts.Character.MonoBehavior.Player
         {
             if (HasBufferedJump || Jumping && CanUseCoyote)
             {
-                mPhysicsController.AddVerticalSpeedHeight();
-                endedJumpEarly = false;
-                coyoteUsable = false;
-                timeLeftGrounded = float.MinValue;
+                _mPhysicsController.AddVerticalSpeedHeight();
+                _endedJumpEarly = false;
+                _coyoteUsable = false;
+                _timeLeftGrounded = float.MinValue;
                 JumpingThisFrame = true;
             }
             else
@@ -167,8 +177,8 @@ namespace _Scripts.Character.MonoBehavior.Player
 
         private void EndedJumpEarly()
         {
-            if (!Grounded && !Jumping && !endedJumpEarly && Velocity.y > 0)
-                endedJumpEarly = true;
+            if (!Grounded && Jumping && !_endedJumpEarly && Velocity.y != 0)
+                _endedJumpEarly = true;
         }
 
         #endregion
@@ -176,17 +186,17 @@ namespace _Scripts.Character.MonoBehavior.Player
         #region Collisions
 
         [Header("Collision")] [SerializeField] private float jumpEndEarlyGravityModifier = 3f;
-        private float fallSpeed;
+        private float _fallSpeed;
 
-        private float timeLeftGrounded;
+        private float _timeLeftGrounded;
 
         private void RunCollisionsCheck()
         {
-            if (mPhysicsController.ExitGroundThisFrame) timeLeftGrounded = Time.time;
+            if (_mPhysicsController.ExitGroundThisFrame) _timeLeftGrounded = Time.time;
 
-            var touchGroundThisFrame = mPhysicsController.TouchGroundThisFrame;
+            var touchGroundThisFrame = _mPhysicsController.TouchGroundThisFrame;
 
-            if (touchGroundThisFrame) coyoteUsable = true; // Only trigger when first touching
+            if (touchGroundThisFrame) _coyoteUsable = true; // Only trigger when first touching
 
             LandingThisFrame = touchGroundThisFrame;
         }
@@ -195,21 +205,21 @@ namespace _Scripts.Character.MonoBehavior.Player
         {
             if (Grounded && CurrentVerticalSpeed != 0)
             {
-                mPhysicsController.StopMovingVertically();
+                _mPhysicsController.StopMovingVertically();
                 return;
             }
 
             ;
 
-            fallSpeed = mPhysicsController.CalculateFallSpeed(apexPoint);
-            if (fallSpeed == 0) return;
+            _fallSpeed = _mPhysicsController.CalculateFallSpeed(_apexPoint);
+            if (_fallSpeed == 0) return;
 
             // Add downward force while ascending if we ended the jump early
-            var fallSpeedModifier = endedJumpEarly && CurrentVerticalSpeed > 0
-                ? fallSpeed * jumpEndEarlyGravityModifier
-                : fallSpeed;
+            var fallSpeedModifier = _endedJumpEarly && CurrentVerticalSpeed > 0
+                ? _fallSpeed * jumpEndEarlyGravityModifier
+                : _fallSpeed;
 
-            mPhysicsController.UpdateCurrentVerticalSpeed(fallSpeedModifier);
+            _mPhysicsController.UpdateCurrentVerticalSpeed(fallSpeedModifier);
         }
 
         #endregion
@@ -219,41 +229,36 @@ namespace _Scripts.Character.MonoBehavior.Player
         [Header("Acceleration")] [SerializeField]
         private float apexBonus = 2;
 
-        public float HorizontalMove => playerInputController.MovementAxisRaw.x;
+        public float HorizontalMove => _playerInputController.MovementAxisRaw.x;
 
         private void CalculateWalk()
         {
-            if (HorizontalMove != 0 && mPhysicsController.CanAccelerate())
+            if (HorizontalMove != 0 && _mPhysicsController.CanAccelerate())
             {
-                var tempApexBonus = Mathf.Sign(HorizontalMove) * apexBonus * apexPoint;
-                mPhysicsController.CalculateAcceleration(HorizontalMove, apexPoint);
+                var tempApexBonus = Mathf.Sign(HorizontalMove) * apexBonus * _apexPoint;
+                _mPhysicsController.CalculateAcceleration(HorizontalMove, _apexPoint);
                 return;
             }
 
-            mPhysicsController.CalculateDeceleration();
+            _mPhysicsController.CalculateDeceleration();
         }
 
         #endregion
 
         #region Move
 
-        [Header("MOVE")]
-        [SerializeField, Tooltip("Raising this value increases collision accuracy at the cost of performance.")]
-        private int freeColliderIterations = 3;
-
-
         // We cast our bounds before moving to avoid future collisions
         private void MoveCharacter()
         {
-            if (!mPhysicsController.MoveIfNeeded()) return;
+            if (!_mPhysicsController.MoveIfNeeded()) return;
 
-            var position = mPhysicsController.GetTransformPosition;
-            RawMovement = mPhysicsController.GetRawMovement();
+            var position = _mPhysicsController.GetTransformPosition;
+            RawMovement = _mPhysicsController.GetRawMovement();
             var move = RawMovement * Time.deltaTime;
             moveGizmo = position + move;
             var furthestPoint = position + move;
 
-            var hit = mPhysicsController.OverlapBoxDetector(furthestPoint);
+            var hit = _mPhysicsController.OverlapBoxDetector(furthestPoint);
 
             if (!hit)
             {
@@ -261,37 +266,13 @@ namespace _Scripts.Character.MonoBehavior.Player
                 return;
             }
 
-            var closestPoint = mPhysicsController.GetClosestPointToMoveTo(hit);
+            var closestPoint = _mPhysicsController.GetClosestPointToMoveTo(hit);
 
             contactPoint = closestPoint;
             var finalPoint = Vector2.Lerp(transform.position, closestPoint, (float) 0.6);
 
             gizmoClosestTransformPosition = finalPoint;
             transform.position = finalPoint;
-
-            // transform.position = new Vector3(transform.position.x, finalPoint.y, transform.position.z);
-
-
-            // otherwise increment away from current pos; see what closest position we can move to
-            /*for (int collider = 1; collider < freeColliderIterations; collider++) {
-                // increment to check all but furthestPoint - we did that already
-                var t = (float)collider / freeColliderIterations;
-                var posToTry = Vector2.Lerp(positionToMoveTo, new Vector2(positionToMoveTo.x, closestPoint.y), t);
-                contactPoint = positionToMoveTo;
-                Debug.Log($"// collider: {collider} freeColliderIterations {freeColliderIterations}, t {t}");
-                Debug.Log(message: "closestPoint x: "+ closestPoint.x + "y: "+ closestPoint.y);
-                Debug.Log(message: $" posToTry x: {posToTry.x} y: {posToTry.y}");
-                Debug.Log(message: $" positionToMoveTo x: {positionToMoveTo.x} y: {positionToMoveTo.y}");
-                Debug.Log($"// mPhysicsController: {mPhysicsController.OverlapBoxDetector(posToTry)}");
-
-                if (mPhysicsController.OverlapBoxDetector(posToTry)) {
-                    
-                    transform.position = positionToMoveTo;
-                    return;
-                }
-
-                positionToMoveTo = posToTry;
-            }*/
         }
 
         public Vector2 contactPoint { get; set; }
@@ -314,6 +295,11 @@ namespace _Scripts.Character.MonoBehavior.Player
             Gizmos.color = Color.magenta;
             Handles.Label(transform.position,"Transform");
             Gizmos.DrawSphere(transform.position, closestGizmoSize - 0.04f);
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            
         }
     }
 }

@@ -1,8 +1,8 @@
-using _Scripts.Character.MonoBehavior;
 using _Scripts.Character.MonoBehavior.Player;
+using _Scripts.Character.StateMachineBehaviors.Player;
 using UnityEngine;
 
-namespace _Scripts.Character.StateMachineBehaviors
+namespace _Scripts.Character.StateMachineBehaviors.Player
 {
     public class AirborneSMB : SceneLinkedSMB<PlayerCharacter>
     {

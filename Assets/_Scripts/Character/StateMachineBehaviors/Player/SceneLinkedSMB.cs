@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Animations;
 
-namespace _Scripts.Character.StateMachineBehaviors
+namespace _Scripts.Character.StateMachineBehaviors.Player
 {
     public class SceneLinkedSMB<TMonoBehaviour> : SealedSMB 
         where TMonoBehaviour : MonoBehaviour

@@ -1,10 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.SymbolStore;
 using UnityEngine;
 using UnityEngine.Audio;
 
-namespace Gamekit2D
+namespace _Scripts.Audio
 {
     public class BackgroundMusicPlayer : MonoBehaviour
     {

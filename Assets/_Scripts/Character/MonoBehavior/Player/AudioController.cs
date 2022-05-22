@@ -4,7 +4,7 @@ using UnityEngine.Tilemaps;
 
 namespace _Scripts.Character.MonoBehavior.Player
 {
-    public class SpriteController : MonoBehaviour
+    public class AudioController : MonoBehaviour
     {
         [Header("Audio")][SerializeField] private RandomAudioPlayer footstepAudioPlayer;
         [SerializeField] private TileBase currentSurface;

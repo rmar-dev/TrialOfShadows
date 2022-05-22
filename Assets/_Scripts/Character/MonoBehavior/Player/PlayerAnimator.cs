@@ -1,3 +1,4 @@
+using System;
 using _Scripts.Character.Interface;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -9,99 +10,92 @@ namespace _Scripts.Character.MonoBehavior.Player
     /// You won't find any programming prowess here.
     /// This is a supplementary script to help with effects and animation. Basically a juice factory.
     /// </summary>
-    public class PlayerAnimator : MonoBehaviour {
-        [SerializeField] private Animator _anim;
-        [SerializeField] private AudioSource _source;
-        [SerializeField] private LayerMask _groundMask;
-        [SerializeField] private ParticleSystem _jumpParticles, _launchParticles;
-        [SerializeField] private ParticleSystem _moveParticles, _landParticles;
-        [SerializeField] private AudioClip[] _footsteps;
-        [SerializeField] private float _maxTilt = .1f;
-        [SerializeField] private float _tiltSpeed = 1;
-        [SerializeField, Range(1f, 3f)] private float _maxIdleSpeed = 2;
-        [SerializeField] private float _maxParticleFallSpeed = -40;
-
-        private IPlayerController _player;
+    public class PlayerAnimator<TMonoBehavior> where TMonoBehavior :
+        IPlayerAnimator, IPlayerHandler 
+    {
+        private TMonoBehavior monoBehavior;
+        
         private bool _playerGrounded;
         private ParticleSystem.MinMaxGradient _currentGradient;
         private Vector2 _movement;
-
-        void Awake() => _player = GetComponentInParent<IPlayerController>();
-
-        void Update() {
-            if (_player == null) return;
-
-            // Flip the sprite
-            if (_player.HorizontalMove != 0) transform.localScale = new Vector3(_player.HorizontalMove > 0 ? 1 : -1, 1, 1);
-
+        
+        public PlayerAnimator (TMonoBehavior handler)
+        {
+            this.monoBehavior = handler;
+        }
+        public void Update()
+        {
+            if (monoBehavior == null) return;
+                
+            var targetRotVector = new Vector3(0, 0, Mathf.Lerp(-monoBehavior.MaxTilt, monoBehavior.MaxTilt, Mathf.InverseLerp(-1, 1, monoBehavior.HorizontalMove)));
+            monoBehavior.Animator.transform.rotation = Quaternion.RotateTowards(monoBehavior.Animator.transform.rotation, Quaternion.Euler(targetRotVector), monoBehavior.TiltSpeed * Time.deltaTime);
+            // _mecanimInterface.UpdateWithNewState(_player);
             // Lean while running
-            var targetRotVector = new Vector3(0, 0, Mathf.Lerp(-_maxTilt, _maxTilt, Mathf.InverseLerp(-1, 1, _player.HorizontalMove)));
-            _anim.transform.rotation = Quaternion.RotateTowards(_anim.transform.rotation, Quaternion.Euler(targetRotVector), _tiltSpeed * Time.deltaTime);
-
+            
             // Speed up idle while running
-            _anim.SetFloat(IdleSpeedKey, Mathf.Lerp(1, _maxIdleSpeed, Mathf.Abs(_player.HorizontalMove)));
-
+            
+            //_anim.SetFloat(IdleSpeedKey, Mathf.Lerp(1, _maxIdleSpeed, Mathf.Abs(_player.HorizontalMove)));
+            
             // Splat
-            if (_player.LandingThisFrame) {
-                _anim.SetTrigger(GroundedKey);
-                _source.PlayOneShot(_footsteps[Random.Range(0, _footsteps.Length)]);
+            if (monoBehavior.LandingThisFrame) {
+                monoBehavior.AudioSource.PlayOneShot(monoBehavior.Footsteps[Random.Range(0, monoBehavior.Footsteps.Length)]);
             }
-
+            
             // Jump effects
-            if (_player.JumpingThisFrame) {
-                _anim.SetTrigger(JumpKey);
-                _anim.ResetTrigger(GroundedKey);
-
+            /*if (_player.JumpingThisFrame) {
                 // Only play particles when grounded (avoid coyote)
                 if (_player.Grounded) {
-                    SetColor(_jumpParticles);
-                    SetColor(_launchParticles);
-                    _jumpParticles.Play();
+                    SetColor(jumpParticles);
+                    SetColor(launchParticles);
+                    jumpParticles.Play();
                 }
-            }
-
+            }*/
+            
             // Play landing effects and begin ground movement effects
-            if (!_playerGrounded && _player.Grounded) {
+            if (!_playerGrounded && monoBehavior.Grounded) {
                 _playerGrounded = true;
-                _moveParticles.Play();
-                _landParticles.transform.localScale = Vector3.one * Mathf.InverseLerp(0, _maxParticleFallSpeed, _movement.y);
-                SetColor(_landParticles);
-                _landParticles.Play();
+                monoBehavior.MoveParticles.Play();
+                monoBehavior.LandParticles.transform.localScale = Vector3.one * Mathf.InverseLerp(0, monoBehavior.MaxParticleFallSpeed, _movement.y);
+                SetColor(monoBehavior.LandParticles);
+                monoBehavior.LandParticles.Play();
             }
-            else if (_playerGrounded && !_player.Grounded) {
+            else if (_playerGrounded && !monoBehavior.Grounded) {
                 _playerGrounded = false;
-                _moveParticles.Stop();
+                monoBehavior.MoveParticles.Stop();
             }
-
+            
             // Detect ground color
-            var groundHit = Physics2D.Raycast(transform.position, Vector3.down, 2, _groundMask);
+            var groundHit = Physics2D.Raycast(monoBehavior.Transform.position, Vector3.down, 2, monoBehavior.GroundMask);
             if (groundHit && groundHit.transform.TryGetComponent(out SpriteRenderer r)) {
-                _currentGradient = new ParticleSystem.MinMaxGradient(r.color * 0.9f, r.color * 1.2f);
-                SetColor(_moveParticles);
+                var color = r.color;
+                _currentGradient = new ParticleSystem.MinMaxGradient(color * 0.9f, color * 1.2f);
+                SetColor(monoBehavior.MoveParticles);
             }
-
-            _movement = _player.RawMovement; // Previous frame movement is more valuable
+            
+            _movement = monoBehavior.RawMovement; // Previous frame movement is more valuable
         }
-
+        
+        public void PlayerJumping()
+        {
+            SetColor(monoBehavior.JumpParticles);
+            SetColor(monoBehavior.LaunchParticles);
+            monoBehavior.JumpParticles.Play();
+        }
+        public void UpdateFacing()
+        {
+            Debug.Log("Update facing");
+        }
         private void OnDisable() {
-            _moveParticles.Stop();
+            monoBehavior.MoveParticles.Stop();
         }
 
         private void OnEnable() {
-            _moveParticles.Play();
+            monoBehavior.MoveParticles.Play();
         }
 
         void SetColor(ParticleSystem ps) {
             var main = ps.main;
             main.startColor = _currentGradient;
         }
-
-        #region Animation Keys
-
-        private static readonly int GroundedKey = Animator.StringToHash("Grounded");
-        private static readonly int IdleSpeedKey = Animator.StringToHash("IdleSpeed");
-        private static readonly int JumpKey = Animator.StringToHash("Jump");
-
-        #endregion
     }
 }

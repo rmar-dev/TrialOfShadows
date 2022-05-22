@@ -1,10 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.UI;
 
-namespace Gamekit2D
+namespace _Scripts.Audio
 {
     [RequireComponent(typeof(Slider))]
     public class MixerSliderLink : MonoBehaviour

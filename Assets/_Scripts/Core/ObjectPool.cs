@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Gamekit2D
+namespace _Scripts.Core
 {
     public abstract class ObjectPool<TPool, TObject, TInfo> : ObjectPool<TPool, TObject>
         where TPool : ObjectPool<TPool, TObject, TInfo>

@@ -1,9 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-namespace Gamekit2D
+namespace _Scripts.Audio
 {
     [RequireComponent(typeof(AudioSource))]
     public class RandomAudioPlayer : MonoBehaviour

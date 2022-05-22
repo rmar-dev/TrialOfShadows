@@ -7,11 +7,11 @@ namespace _Scripts.Character.MonoBehavior.Player
 {
     public class PhysicsController : MonoBehaviour
     {
-        [Header("COLLISION")] [SerializeField] private Bounds characterBounds;
+        [Header("COLLISION")] 
+        [SerializeField] private Bounds characterBounds;
         [SerializeField] private LayerMask groundLayer;
         [SerializeField] private int detectorCount = 3;
         [SerializeField] private float detectionRayLength = 0.1f;
-
         [SerializeField] [Range(0.1f, 0.3f)]
         private float rayBuffer = 0.1f; // Prevents side detectors hitting the ground
         [SerializeField] [Range(0.0f, 3.0f)] private float currentGizmoSize = 0.05f;
@@ -22,9 +22,9 @@ namespace _Scripts.Character.MonoBehavior.Player
         private Vector3 _halfSize;
         public bool CollidingUp => _collidingUp;
         public bool Grounded => _collidingDown;
+        public Bounds CharacterBounds => characterBounds;
         public bool TouchGroundThisFrame => _collidingDown && !_previousGroundCheck;
         public bool ExitGroundThisFrame => !_collidingDown && _previousGroundCheck;
-
         public bool CollidingLeft => _collidingLeft;
         public bool CollidingRight => _collidingRight;
 
@@ -89,7 +89,7 @@ namespace _Scripts.Character.MonoBehavior.Player
         #endregion
 
         #region Forces
-
+        
         [Header("GRAVITY")] [SerializeField] private float fallClamp = -40f;
         [SerializeField] private float minFallSpeed = 80f;
         [SerializeField] private float maxFallSpeed = 120f;
@@ -169,20 +169,27 @@ namespace _Scripts.Character.MonoBehavior.Player
             Vector2 halfSize = characterBounds.size / 2;
             Vector2 direction = CalculateDirection(closestPoint);
             Vector2 finalDirection = direction * halfSize;
+            drawDirection = finalDirection;
             return closestPoint - finalDirection;
         }
 
+        public void UpdatePlayerStateToJump()
+        {
+            
+        }
+        
+        public Vector2 drawDirection { get; set; }
+
         private Vector2 CalculateDirection(Vector2 closestPoint)
         {
-            Vector3 transformPosition = transform.position;
-            Debug.Log($"finalDirection {closestPoint.y - transformPosition.y}, vector.down { Vector2.down }");
-
-            if (closestPoint.y - transformPosition.y < 0)
-            {
-                return Vector2.down;
-            }
+            // Vector3 transformPosition = transform.position;
+            //
+            // if (closestPoint.y - transformPosition.y < 0)
+            // {
+            //     return Vector2.down;
+            // }
             
-            return Vector2.up;
+            return Vector2.down;
         }
 
         private void OnDrawGizmos()
@@ -196,7 +203,7 @@ namespace _Scripts.Character.MonoBehavior.Player
             Vector3 gizmoHalfSize = characterBounds.size / 2;
             Gizmos.color = Color.white;
             Vector3 feetPosition = new Vector3(transformPosition.x, transformPosition.y - gizmoHalfSize.y, transformPosition.z);
-            Gizmos.DrawSphere(feetPosition, currentGizmoSize + 0.02f);
+            Gizmos.DrawSphere(drawDirection, currentGizmoSize + 0.02f);
             
             // Rays
             CalculateRayRanged();
